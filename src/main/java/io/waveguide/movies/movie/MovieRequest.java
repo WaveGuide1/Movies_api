@@ -23,11 +23,13 @@ public class MovieRequest {
     @NotBlank(message = "Studio is required")
     private String studio;
 
-    @NotBlank(message = "Movie cast is required")
     private Set<String> movieCast;
 
+    @NotBlank(message = "Poster is required")
     private String poster;
 
-    @NotBlank(message = "Release year is required")
+    @NotBlank(message = "Poster url is required")
+    private String posterUrl;
+
     private Integer releaseYear;
 }

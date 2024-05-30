@@ -29,5 +29,7 @@ public class Movie {
 
     private String poster;
 
+    private String posterUrl;
+
     private Integer releaseYear;
 }
