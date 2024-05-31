@@ -1,4 +1,4 @@
-package io.waveguide.movies.movie;
+package io.waveguide.movies.file;
 
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -9,7 +9,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 
 @Service
-public class FileServiceImpl implements FileService{
+public class FileServiceImpl implements FileService {
     @Override
     public String uploadFile(String path, MultipartFile file) throws IOException {
         // Getting file name
@@ -33,6 +33,6 @@ public class FileServiceImpl implements FileService{
     @Override
     public InputStream getResourceFile(String path, String fileName) throws FileNotFoundException {
         String filePath = path + File.separator + fileName;
-        return new FileInputStream(fileName);
+        return new FileInputStream(filePath);
     }
 }

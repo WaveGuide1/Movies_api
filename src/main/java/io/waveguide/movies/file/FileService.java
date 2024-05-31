@@ -1,4 +1,4 @@
-package io.waveguide.movies.movie;
+package io.waveguide.movies.file;
 
 import org.springframework.web.multipart.MultipartFile;
 
