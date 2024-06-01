@@ -11,7 +11,6 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class MovieRequest {
 
     @NotBlank(message = "Movie Title is required")
