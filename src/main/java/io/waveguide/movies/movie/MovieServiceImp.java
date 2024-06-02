@@ -43,7 +43,7 @@ public class MovieServiceImp implements MovieService{
         Movie savedMovie = movieRepository.save(movie);
 
         // Generating posterUrl
-        String posterUrl = "/files/" + uploadFileName;
+        String posterUrl = baseUrl + "/files/" + uploadFileName;
 
         MovieRequest movieRequest = new MovieRequest();
 
