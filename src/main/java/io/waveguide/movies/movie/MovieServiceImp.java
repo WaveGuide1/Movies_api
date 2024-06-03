@@ -32,6 +32,9 @@ public class MovieServiceImp implements MovieService{
 
         request.setPoster(uploadFileName);
 
+        // Generating posterUrl
+        String posterUrl = baseUrl + "/files/" + uploadFileName;
+
         var movie = Movie.builder()
                 .title(request.getTitle())
                 .director(request.getDirector())
@@ -39,16 +42,14 @@ public class MovieServiceImp implements MovieService{
                 .movieCast(request.getMovieCast())
                 .poster(request.getPoster())
                 .releaseYear(request.getReleaseYear())
+                .posterUrl(posterUrl)
                 .build();
         Movie savedMovie = movieRepository.save(movie);
 
-        // Generating posterUrl
-        String posterUrl = baseUrl + "/files/" + uploadFileName;
 
         MovieRequest movieRequest = new MovieRequest();
 
         BeanUtils.copyProperties(savedMovie, movieRequest);
-        movieRequest.setPosterUrl(posterUrl);
         return movieRequest;
     }
 
