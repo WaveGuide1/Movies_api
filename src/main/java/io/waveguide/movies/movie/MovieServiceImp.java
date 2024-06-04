@@ -67,7 +67,14 @@ public class MovieServiceImp implements MovieService{
     public List<MovieRequest> getAllMovies() {
         List<Movie> movies = movieRepository.findAll();
         List<MovieRequest> response = new ArrayList<>();
-        BeanUtils.copyProperties(movies, response);
+        for(Movie movie: movies){
+            var movieDTO = MovieRequest.builder()
+                    .title(movie.getTitle()).director(movie.getDirector())
+                    .movieCast(movie.getMovieCast()).studio(movie.getStudio())
+                    .poster(movie.getPoster()).posterUrl(movie.getPosterUrl())
+                    .releaseYear(movie.getReleaseYear()).build();
+            response.add(movieDTO);
+        }
         return response;
     }
 }
