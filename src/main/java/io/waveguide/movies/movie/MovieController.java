@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.waveguide.movies.utils.GeneralResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -41,9 +42,12 @@ public class MovieController {
     }
 
     @GetMapping("/")
-    public ResponseEntity<List<MovieRequest>> getAllMovies(){
+    public ResponseEntity<GeneralResponse<List<MovieRequest>>> getAllMovies(){
+        GeneralResponse<List<MovieRequest>> generalResponse = new GeneralResponse<>();
         List<MovieRequest> movie = movieServiceImp.getAllMovies();
-        return new ResponseEntity<>(movie, HttpStatus.OK);
+        generalResponse.setMessage("Successful!");
+        generalResponse.setData(movie);
+        return ResponseEntity.ok(generalResponse);
     }
 
     private MovieRequest convertToMovieRequest(String movieRequest) throws JsonProcessingException {
