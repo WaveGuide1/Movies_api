@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -28,6 +29,21 @@ public class MovieController {
         response.setMessage("Successfully created");
         response.setData(info);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @GetMapping("/{movieId}")
+    public ResponseEntity<GeneralResponse<MovieRequest>> getMovie(@PathVariable Long movieId){
+        GeneralResponse<MovieRequest> response = new GeneralResponse<>();
+        MovieRequest movie = movieServiceImp.getMovie(movieId);
+        response.setMessage("Successful!");
+        response.setData(movie);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/")
+    public ResponseEntity<List<MovieRequest>> getAllMovies(){
+        List<MovieRequest> movie = movieServiceImp.getAllMovies();
+        return new ResponseEntity<>(movie, HttpStatus.OK);
     }
 
     private MovieRequest convertToMovieRequest(String movieRequest) throws JsonProcessingException {

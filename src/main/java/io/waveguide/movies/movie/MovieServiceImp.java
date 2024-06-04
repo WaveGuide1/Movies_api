@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -55,11 +56,18 @@ public class MovieServiceImp implements MovieService{
 
     @Override
     public MovieRequest getMovie(Long movieId) {
-        return null;
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new RuntimeException("Not found"));
+
+        MovieRequest response = new MovieRequest();
+        BeanUtils.copyProperties(movie, response);
+        return response;
     }
 
     @Override
     public List<MovieRequest> getAllMovies() {
-        return List.of();
+        List<Movie> movies = movieRepository.findAll();
+        List<MovieRequest> response = new ArrayList<>();
+        BeanUtils.copyProperties(movies, response);
+        return response;
     }
 }
