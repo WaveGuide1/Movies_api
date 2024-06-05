@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +32,9 @@ public class MovieServiceImp implements MovieService{
     public MovieRequest addMovie(MovieRequest request, MultipartFile file) throws IOException {
 
         // Upload the file
+        if(Files.exists(Paths.get(path + File.separator + file.getOriginalFilename()))){
+            throw new RuntimeException("File already exist.. Enter another file name");
+        }
         String uploadFileName = fileService.uploadFile(path, file);
 
         request.setPoster(uploadFileName);
@@ -55,6 +61,38 @@ public class MovieServiceImp implements MovieService{
     }
 
     @Override
+    public MovieRequest updateMovie(Long movieId, MovieRequest request, MultipartFile file) throws IOException {
+        Movie existingMovie = movieRepository.findById(movieId).orElseThrow(() -> new RuntimeException("Not found"));
+
+        String filename = existingMovie.getPoster();
+        if (file != null){
+            Files.deleteIfExists(Paths.get(path + File.separator + filename));
+            filename = fileService.uploadFile(path, file);
+        }
+        request.setPoster(filename);
+
+        String posterUrl = baseUrl + "/files/" + filename;
+
+        Movie updatedMovie = Movie.builder()
+                .id(existingMovie.getId())
+                .title(request.getTitle())
+                .studio(request.getStudio())
+                .movieCast(request.getMovieCast())
+                .director(request.getDirector())
+                .poster(request.getPoster())
+                .releaseYear(request.getReleaseYear())
+                .posterUrl(posterUrl)
+                .build();
+
+        Movie movie = movieRepository.save(updatedMovie);
+
+
+        MovieRequest movieResponse = new MovieRequest();
+        BeanUtils.copyProperties(movie, movieResponse);
+        return movieResponse;
+    }
+
+    @Override
     public MovieRequest getMovie(Long movieId) {
         Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new RuntimeException("Not found"));
 
@@ -76,5 +114,15 @@ public class MovieServiceImp implements MovieService{
             response.add(movieDTO);
         }
         return response;
+    }
+
+    @Override
+    public String deleteMovie(Long movieId) throws IOException {
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new RuntimeException("Not found"));
+
+        Files.deleteIfExists(Paths.get(path + File.separator + movie.getPoster()));
+
+        movieRepository.delete(movie);
+        return "Movie deleted successfully";
     }
 }
