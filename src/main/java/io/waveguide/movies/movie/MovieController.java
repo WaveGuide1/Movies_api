@@ -31,6 +31,21 @@ public class MovieController {
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 
+    @PutMapping("/{movieId}")
+    public ResponseEntity<GeneralResponse<MovieRequest>> updateMovie(
+            @PathVariable Long movieId, @RequestPart String movieRequest,
+            @RequestPart MultipartFile file
+    ) throws IOException {
+        if (file.isEmpty()) return null;
+
+        GeneralResponse<MovieRequest> response = new GeneralResponse<>();
+        MovieRequest request = convertToMovieRequest(movieRequest);
+        var info = movieServiceImp.updateMovie(movieId, request, file);
+        response.setMessage("Successfully updated");
+        response.setData(info);
+        return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
     @GetMapping("/{movieId}")
     public ResponseEntity<GeneralResponse<MovieRequest>> getMovie(@PathVariable Long movieId){
         GeneralResponse<MovieRequest> response = new GeneralResponse<>();
@@ -47,6 +62,11 @@ public class MovieController {
         generalResponse.setMessage("Successful!");
         generalResponse.setData(movie);
         return ResponseEntity.ok(generalResponse);
+    }
+
+    @DeleteMapping("/{movieId}")
+    public ResponseEntity<String> deleteMovie(@PathVariable Long movieId) throws IOException {
+        return ResponseEntity.ok(movieServiceImp.deleteMovie(movieId));
     }
 
     private MovieRequest convertToMovieRequest(String movieRequest) throws JsonProcessingException {
