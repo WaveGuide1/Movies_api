@@ -1,5 +1,7 @@
 package io.waveguide.movies.movie;
 
+import io.waveguide.movies.exceptions.FileExistException;
+import io.waveguide.movies.exceptions.MovieNotFoundException;
 import io.waveguide.movies.file.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
@@ -33,7 +35,7 @@ public class MovieServiceImp implements MovieService{
 
         // Upload the file
         if(Files.exists(Paths.get(path + File.separator + file.getOriginalFilename()))){
-            throw new RuntimeException("File already exist.. Enter another file name");
+            throw new FileExistException("File already exist.. Enter another file name");
         }
         String uploadFileName = fileService.uploadFile(path, file);
 
@@ -62,7 +64,7 @@ public class MovieServiceImp implements MovieService{
 
     @Override
     public MovieRequest updateMovie(Long movieId, MovieRequest request, MultipartFile file) throws IOException {
-        Movie existingMovie = movieRepository.findById(movieId).orElseThrow(() -> new RuntimeException("Not found"));
+        Movie existingMovie = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException("Not found"));
 
         String filename = existingMovie.getPoster();
         if (file != null){
@@ -94,7 +96,7 @@ public class MovieServiceImp implements MovieService{
 
     @Override
     public MovieRequest getMovie(Long movieId) {
-        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new RuntimeException("Not found"));
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException("Not found"));
 
         MovieRequest response = new MovieRequest();
         BeanUtils.copyProperties(movie, response);
@@ -118,7 +120,7 @@ public class MovieServiceImp implements MovieService{
 
     @Override
     public String deleteMovie(Long movieId) throws IOException {
-        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new RuntimeException("Not found"));
+        Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException("Not found"));
 
         Files.deleteIfExists(Paths.get(path + File.separator + movie.getPoster()));
 
