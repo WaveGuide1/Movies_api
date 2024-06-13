@@ -2,7 +2,9 @@ package io.waveguide.movies.movie;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.waveguide.movies.exceptions.EmptyFileException;
 import io.waveguide.movies.utils.GeneralResponse;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,8 +23,9 @@ public class MovieController {
 
     @PostMapping("/")
     public ResponseEntity<GeneralResponse<MovieRequest>> addMovie(
-            @RequestPart MultipartFile file, @RequestPart String movieRequest
-            ) throws IOException {
+            @Valid @RequestPart MultipartFile file, @RequestPart String movieRequest
+            ) throws IOException, EmptyFileException {
+        if(file.isEmpty()) throw new EmptyFileException("Up load a file");
         GeneralResponse<MovieRequest> response = new GeneralResponse<>();
         MovieRequest request = convertToMovieRequest(movieRequest);
         var info = movieServiceImp.addMovie(request, file);
@@ -33,7 +36,7 @@ public class MovieController {
 
     @PutMapping("/{movieId}")
     public ResponseEntity<GeneralResponse<MovieRequest>> updateMovie(
-            @PathVariable Long movieId, @RequestPart String movieRequest,
+            @Valid @PathVariable Long movieId, @RequestPart String movieRequest,
             @RequestPart MultipartFile file
     ) throws IOException {
         if (file.isEmpty()) return null;
