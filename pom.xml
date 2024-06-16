@@ -14,7 +14,7 @@
 	<name>movies</name>
 	<description>Moves RESTful API</description>
 	<properties>
-		<java.version>22</java.version>
+		<java.version>17</java.version>
 		<maven.compiler.source>22</maven.compiler.source>
 		<maven.compiler.target>22</maven.compiler.target>
 	</properties>

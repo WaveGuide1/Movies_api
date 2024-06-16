@@ -1,0 +1,25 @@
+services:
+  db:
+    container_name: postgres-sql
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 37562012
+      POSTGRES_DB: movieDB
+    ports:
+      - "5432:5432"
+    volumes:
+      - /home/py-machine/docker/volume/postgres:/var/lib/postgres/data
+#    restart: always
+
+  backend:
+    build: .
+    container_name: movie_api_container
+    ports:
+      - "8080:8080"
+    env_file:
+      - .env
+    depends_on:
+      - db
+#    restart: always
+
