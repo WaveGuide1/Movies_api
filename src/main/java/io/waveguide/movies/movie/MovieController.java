@@ -3,6 +3,7 @@ package io.waveguide.movies.movie;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.waveguide.movies.exceptions.EmptyFileException;
+import io.waveguide.movies.utils.ApplicationConstant;
 import io.waveguide.movies.utils.GeneralResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -65,6 +66,24 @@ public class MovieController {
         generalResponse.setMessage("Successful!");
         generalResponse.setData(movie);
         return ResponseEntity.ok(generalResponse);
+    }
+
+    @GetMapping("/moviePage")
+    public ResponseEntity<MovieResponsePage> getMoviePagination(
+            @RequestParam(defaultValue = ApplicationConstant.PAGE_NUMBER) Integer pageNumber,
+            @RequestParam(defaultValue = ApplicationConstant.PAGE_SIZE) Integer pageSize
+    ){
+        return ResponseEntity.ok(movieServiceImp.getMoviesPagination(pageNumber, pageSize));
+    }
+
+    @GetMapping("/moviePageAndSorting")
+    public ResponseEntity<MovieResponsePage> getMoviePaginationAndSorting(
+            @RequestParam(defaultValue = ApplicationConstant.PAGE_NUMBER) Integer pageNumber,
+            @RequestParam(defaultValue = ApplicationConstant.PAGE_SIZE) Integer pageSize,
+            @RequestParam(defaultValue = ApplicationConstant.SORT_BY) String sortBy,
+            @RequestParam(defaultValue = ApplicationConstant.SORT_DIR) String dir
+    ){
+        return ResponseEntity.ok(movieServiceImp.getMoviesPaginationAndSorting(pageNumber, pageSize, sortBy, dir));
     }
 
     @DeleteMapping("/{movieId}")

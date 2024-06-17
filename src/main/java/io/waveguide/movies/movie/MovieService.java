@@ -15,5 +15,9 @@ public interface MovieService {
 
     List<MovieRequest> getAllMovies();
 
+    MovieResponsePage getMoviesPagination(Integer pageNumber, Integer pageSize);
+
+    MovieResponsePage getMoviesPaginationAndSorting(Integer pageNumber, Integer pageSize, String sortBy, String dir);
+
     String deleteMovie(Long movieId) throws IOException;
 }
