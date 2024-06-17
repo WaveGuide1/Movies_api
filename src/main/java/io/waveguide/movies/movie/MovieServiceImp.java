@@ -6,6 +6,10 @@ import io.waveguide.movies.file.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -118,6 +122,49 @@ public class MovieServiceImp implements MovieService{
         return response;
     }
 
+    // Get movie applying pagination
+    @Override
+    public MovieResponsePage getMoviesPagination(Integer pageNumber, Integer pageSize) {
+        Pageable pageable = PageRequest.of(pageNumber, pageSize);
+        Page<Movie> moviePage = movieRepository.findAll(pageable);
+        List<Movie> movies = moviePage.getContent();
+        List<MovieRequest> response = new ArrayList<>();
+        for(Movie movie: movies){
+            var movieDTO = MovieRequest.builder()
+                    .title(movie.getTitle()).director(movie.getDirector())
+                    .movieCast(movie.getMovieCast()).studio(movie.getStudio())
+                    .poster(movie.getPoster()).posterUrl(movie.getPosterUrl())
+                    .releaseYear(movie.getReleaseYear()).build();
+            response.add(movieDTO);
+        }
+        return new MovieResponsePage(response, pageNumber, pageSize,
+                moviePage.getNumberOfElements(), moviePage.getTotalPages(), moviePage.isLast());
+
+    }
+
+    // Get movies applying both pagination and sorting
+    @Override
+    public MovieResponsePage getMoviesPaginationAndSorting(Integer pageNumber, Integer pageSize, String sortBy, String dir) {
+        Sort sort = dir.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending()
+                : Sort.by(sortBy).descending();
+
+        Pageable pageable = PageRequest.of(pageNumber, pageSize, sort);
+        Page<Movie> moviePage = movieRepository.findAll(pageable);
+        List<Movie> movies = moviePage.getContent();
+        List<MovieRequest> response = new ArrayList<>();
+        for(Movie movie: movies){
+            var movieDTO = MovieRequest.builder()
+                    .title(movie.getTitle()).director(movie.getDirector())
+                    .movieCast(movie.getMovieCast()).studio(movie.getStudio())
+                    .poster(movie.getPoster()).posterUrl(movie.getPosterUrl())
+                    .releaseYear(movie.getReleaseYear()).build();
+            response.add(movieDTO);
+        }
+        return new MovieResponsePage(response, pageNumber, pageSize,
+                moviePage.getNumberOfElements(), moviePage.getTotalPages(), moviePage.isLast());
+    }
+
+    // Delete movie
     @Override
     public String deleteMovie(Long movieId) throws IOException {
         Movie movie = movieRepository.findById(movieId).orElseThrow(() -> new MovieNotFoundException("Not found"));
