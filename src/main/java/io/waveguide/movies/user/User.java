@@ -1,0 +1,79 @@
+package io.waveguide.movies.user;
+
+import io.waveguide.movies.userRefreshToken.RefreshToken;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import lombok.*;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
+import java.util.Collection;
+import java.util.List;
+
+@Getter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@Table(name = "users")
+public class User implements UserDetails {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long userId;
+
+    @NotBlank(message = "Name can not be blank")
+    private String name;
+
+    @NotBlank(message = "Username can not be blank")
+    private String username;
+
+    @NotBlank(message = "Email can not be blank")
+    @Column(unique = true)
+    @Email(message = "Provide correct email address")
+    private String email;
+
+    @NotBlank(message = "Password can not be blank")
+    private String password;
+
+    @OneToOne(mappedBy = "user")
+    private RefreshToken refreshToken;
+
+    private boolean isEnabled = true;
+
+    private boolean isAccountNonExpired = true;
+
+    private boolean isCredentialsNonExpired = false;
+
+    private boolean isAccountNonLocked = true;
+
+    @Enumerated(EnumType.STRING)
+    private UserRole role;
+
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return List.of();
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return isAccountNonExpired;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return isAccountNonLocked;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return isCredentialsNonExpired;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return isEnabled;
+    }
+}
